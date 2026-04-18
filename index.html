@@ -5,559 +5,323 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sales Tracker</title>
   <style>
+    :root {
+      --bg: #eef2f6;
+      --surface: #ffffff;
+      --border: #e5e7eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --success: #15803d;
+      --success-bg: #ecfdf3;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --warn: #a16207;
+      --warn-bg: #fffbeb;
+      --info: #1d4ed8;
+      --info-bg: #eff6ff;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+    }
+
     * { box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      background: #f4f6f8;
-      color: #222;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
+
     .container {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 20px;
     }
-    h1 {
-      margin: 0 0 16px;
-      font-size: 28px;
+
+    h1, h2, h3, h4, p { margin-top: 0; }
+
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 18px;
     }
+
+    .page-title {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
     .subtitle {
-      margin-bottom: 20px;
-      color: #555;
+      color: var(--muted);
+      margin-bottom: 0;
+      line-height: 1.5;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-bottom: 20px;
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 16px;
     }
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-    }
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: #666;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-    .card .value {
-      font-size: 26px;
-      font-weight: bold;
-    }
-    .section {
-      background: #fff;
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      margin-bottom: 20px;
-    }
-    .section h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
+
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
     }
-    label {
+
+    .field label {
       display: block;
       font-size: 13px;
-      margin-bottom: 6px;
-      color: #555;
-      font-weight: 600;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 7px;
     }
-    input {
+
+    .field input {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d5dbe1;
-      border-radius: 10px;
-      font-size: 14px;
+      height: 46px;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 15px;
+      background: #fff;
+      color: var(--text);
     }
+
+    .field input:focus {
+      outline: none;
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
     .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 16px;
     }
+
     button {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-size: 14px;
-      font-weight: 700;
+      border: 0;
       cursor: pointer;
-    }
-    .primary { background: #2563eb; color: #fff; }
-    .secondary { background: #10b981; color: #fff; }
-    .muted { background: #6b7280; color: #fff; }
-    .danger { background: #ef4444; color: #fff; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
+      border-radius: 12px;
+      height: 46px;
+      padding: 0 18px;
       font-size: 14px;
-      background: #fff;
+      font-weight: 800;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
-    th, td {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: top;
-    }
-    th {
-      background: #f9fafb;
-      font-size: 13px;
-      color: #555;
-    }
-    .filters {
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .btn-secondary { background: linear-gradient(135deg, #22c55e, #15803d); color: white; }
+    .btn-muted { background: #6b7280; color: white; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .btn-light { background: #e5e7eb; color: #374151; }
+
+    .summary-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary-card {
+      border-radius: 16px;
+      padding: 18px;
+      min-height: 122px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .summary-card h3 {
+      font-size: 14px;
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .summary-card .value {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .card-investment { background: #f8fafc; color: #1f2937; }
+    .card-paid { background: var(--success-bg); color: var(--success); }
+    .card-unpaid { background: var(--danger-bg); color: var(--danger); }
+    .card-unsold { background: var(--warn-bg); color: var(--warn); }
+    .card-expected { background: var(--info-bg); color: var(--info); }
+    .card-sold { background: #f5f3ff; color: #6d28d9; }
+    .card-profit { background: #effdf7; color: #047857; }
+    .card-qty { background: #fff7ed; color: #c2410c; }
+
+    .filters-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
       gap: 12px;
       align-items: end;
     }
-    .table-wrap {
+
+    .filter-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .desktop-table-wrap {
       overflow-x: auto;
     }
-    .small {
-      color: #666;
-      font-size: 12px;
+
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: collapse;
+      font-size: 14px;
     }
-    .pill {
-      display: inline-block;
-      padding: 4px 8px;
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 13px;
+      color: #4b5563;
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 999px;
+      padding: 5px 10px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      white-space: nowrap;
     }
-    .paid { background: #dcfce7; color: #166534; }
-    .unpaid { background: #fee2e2; color: #991b1b; }
+
+    .status-paid { background: #dcfce7; color: #166534; }
+    .status-unpaid { background: #fee2e2; color: #991b1b; }
+
     .empty {
       text-align: center;
-      padding: 20px;
-      color: #777;
+      padding: 28px 10px;
+      color: var(--muted);
+      font-size: 15px;
     }
-    @media (max-width: 640px) {
+
+    .mobile-records {
+      display: none;
+      gap: 14px;
+    }
+
+    .record-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .record-name {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .record-date {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .record-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .metric-value {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .record-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .record-actions button {
+      flex: 1;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .form-grid,
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filter-actions {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 700px) {
       .container { padding: 14px; }
-      .card .value { font-size: 22px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Sales Tracker</h1>
-    <div class="subtitle">Track batch investment, sold items, paid orders, unpaid orders, unsold stock, and export to Excel-compatible CSV.</div>
-
-    <div class="grid" id="summaryCards">
-      <div class="card"><h3>Total Investment</h3><div class="value" id="totalInvestment">0.00</div></div>
-      <div class="card"><h3>Paid Earnings</h3><div class="value" id="paidEarnings">0.00</div></div>
-      <div class="card"><h3>Unpaid Value</h3><div class="value" id="unpaidValue">0.00</div></div>
-      <div class="card"><h3>Sold Value</h3><div class="value" id="soldValue">0.00</div></div>
-      <div class="card"><h3>Unsold Value</h3><div class="value" id="unsoldValue">0.00</div></div>
-      <div class="card"><h3>Expected if All Paid</h3><div class="value" id="expectedAllPaid">0.00</div></div>
-      <div class="card"><h3>Estimated Profit</h3><div class="value" id="estimatedProfit">0.00</div></div>
-      <div class="card"><h3>Unsold Quantity</h3><div class="value" id="unsoldQty">0</div></div>
-    </div>
-
-    <div class="section">
-      <h2>Add Product Record</h2>
-      <div class="form-grid">
-        <div>
-          <label for="recordDate">Date</label>
-          <input type="date" id="recordDate" />
-        </div>
-        <div>
-          <label for="productName">Product Name</label>
-          <input type="text" id="productName" placeholder="e.g. Adobo" />
-        </div>
-        <div>
-          <label for="investment">Investment for Whole Batch</label>
-          <input type="number" id="investment" min="0" step="0.01" placeholder="e.g. 600" />
-        </div>
-        <div>
-          <label for="quantity">Total Items in Batch</label>
-          <input type="number" id="quantity" min="0" step="1" placeholder="e.g. 10" />
-        </div>
-        <div>
-          <label for="price">Selling Price per Item</label>
-          <input type="number" id="price" min="0" step="0.01" placeholder="e.g. 100" />
-        </div>
-        <div>
-          <label for="ordered">Items Ordered / Sold</label>
-          <input type="number" id="ordered" min="0" step="1" placeholder="e.g. 5" />
-        </div>
-        <div>
-          <label for="paidCount">Paid Items Count</label>
-          <input type="number" id="paidCount" min="0" step="1" placeholder="e.g. 3" />
-        </div>
-      </div>
-      <div class="actions">
-        <button class="primary" onclick="addRecord()">Add Record</button>
-        <button class="muted" onclick="clearForm()">Clear Form</button>
-      </div>
-      <div class="small" style="margin-top:10px;">Rule: paid count cannot be greater than ordered count, and ordered count cannot be greater than total items.</div>
-    </div>
-
-    <div class="section">
-      <h2>Filter by Date Range</h2>
-      <div class="filters">
-        <div>
-          <label for="fromDate">From Date</label>
-          <input type="date" id="fromDate" />
-        </div>
-        <div>
-          <label for="toDate">To Date</label>
-          <input type="date" id="toDate" />
-        </div>
-        <div class="actions" style="margin-top:0;">
-          <button class="secondary" onclick="applyFilters()">Apply Filter</button>
-          <button class="muted" onclick="resetFilters()">Reset Filter</button>
-          <button class="primary" onclick="exportCSV()">Export Excel CSV</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Records</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Product</th>
-              <th>Investment</th>
-              <th>Total Qty</th>
-              <th>Price</th>
-              <th>Ordered</th>
-              <th>Paid</th>
-              <th>Unpaid</th>
-              <th>Sold Value</th>
-              <th>Paid Earnings</th>
-              <th>Unpaid Value</th>
-              <th>Unsold Qty</th>
-              <th>Unsold Value</th>
-              <th>Expected</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="recordsBody">
-            <tr><td colspan="16" class="empty">No records yet.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const STORAGE_KEY = 'simple_sales_tracker_records';
-    let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    let filteredRecords = [...records];
-
-    function todayISO() {
-      return new Date().toISOString().split('T')[0];
-    }
-
-    document.getElementById('recordDate').value = todayISO();
-
-    function formatMoney(value) {
-      return Number(value || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
-
-    function saveRecords() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-    }
-
-    function calculateRecord(item) {
-      const investment = Number(item.investment || 0);
-      const quantity = Number(item.quantity || 0);
-      const price = Number(item.price || 0);
-      const ordered = Number(item.ordered || 0);
-      const paidCount = Number(item.paidCount || 0);
-      const unpaidCount = Math.max(ordered - paidCount, 0);
-      const soldValue = ordered * price;
-      const paidEarnings = paidCount * price;
-      const unpaidValue = unpaidCount * price;
-      const unsoldQty = Math.max(quantity - ordered, 0);
-      const unsoldValue = unsoldQty * price;
-      const expectedAllPaid = soldValue;
-      const estimatedProfit = soldValue - investment;
-
-      return {
-        ...item,
-        investment,
-        quantity,
-        price,
-        ordered,
-        paidCount,
-        unpaidCount,
-        soldValue,
-        paidEarnings,
-        unpaidValue,
-        unsoldQty,
-        unsoldValue,
-        expectedAllPaid,
-        estimatedProfit
-      };
-    }
-
-    function validateInputs(date, name, investment, quantity, price, ordered, paidCount) {
-      if (!date || !name) {
-        alert('Please enter both date and product name.');
-        return false;
-      }
-      if ([investment, quantity, price, ordered, paidCount].some(v => v === '' || isNaN(v))) {
-        alert('Please fill in all number fields.');
-        return false;
-      }
-      if (Number(ordered) > Number(quantity)) {
-        alert('Ordered items cannot be greater than total items in batch.');
-        return false;
-      }
-      if (Number(paidCount) > Number(ordered)) {
-        alert('Paid count cannot be greater than ordered count.');
-        return false;
-      }
-      if ([investment, quantity, price, ordered, paidCount].some(v => Number(v) < 0)) {
-        alert('Values cannot be negative.');
-        return false;
-      }
-      return true;
-    }
-
-    function addRecord() {
-      const date = document.getElementById('recordDate').value;
-      const name = document.getElementById('productName').value.trim();
-      const investment = document.getElementById('investment').value;
-      const quantity = document.getElementById('quantity').value;
-      const price = document.getElementById('price').value;
-      const ordered = document.getElementById('ordered').value;
-      const paidCount = document.getElementById('paidCount').value;
-
-      if (!validateInputs(date, name, investment, quantity, price, ordered, paidCount)) return;
-
-      records.push({
-        id: Date.now(),
-        date,
-        name,
-        investment: Number(investment),
-        quantity: Number(quantity),
-        price: Number(price),
-        ordered: Number(ordered),
-        paidCount: Number(paidCount)
-      });
-
-      saveRecords();
-      clearForm(false);
-      applyFilters();
-    }
-
-    function clearForm(resetDate = true) {
-      if (resetDate) document.getElementById('recordDate').value = todayISO();
-      document.getElementById('productName').value = '';
-      document.getElementById('investment').value = '';
-      document.getElementById('quantity').value = '';
-      document.getElementById('price').value = '';
-      document.getElementById('ordered').value = '';
-      document.getElementById('paidCount').value = '';
-    }
-
-    function deleteRecord(id) {
-      if (!confirm('Delete this record?')) return;
-      records = records.filter(r => r.id !== id);
-      saveRecords();
-      applyFilters();
-    }
-
-    function inDateRange(recordDate, fromDate, toDate) {
-      if (!fromDate && !toDate) return true;
-      const date = new Date(recordDate + 'T00:00:00');
-      if (fromDate) {
-        const from = new Date(fromDate + 'T00:00:00');
-        if (date < from) return false;
-      }
-      if (toDate) {
-        const to = new Date(toDate + 'T23:59:59');
-        if (date > to) return false;
-      }
-      return true;
-    }
-
-    function applyFilters() {
-      const fromDate = document.getElementById('fromDate').value;
-      const toDate = document.getElementById('toDate').value;
-      filteredRecords = records.filter(r => inDateRange(r.date, fromDate, toDate));
-      renderTable();
-      renderSummary();
-    }
-
-    function resetFilters() {
-      document.getElementById('fromDate').value = '';
-      document.getElementById('toDate').value = '';
-      filteredRecords = [...records];
-      renderTable();
-      renderSummary();
-    }
-
-    function renderSummary() {
-      const totals = filteredRecords.map(calculateRecord).reduce((acc, item) => {
-        acc.totalInvestment += item.investment;
-        acc.paidEarnings += item.paidEarnings;
-        acc.unpaidValue += item.unpaidValue;
-        acc.soldValue += item.soldValue;
-        acc.unsoldValue += item.unsoldValue;
-        acc.expectedAllPaid += item.expectedAllPaid;
-        acc.estimatedProfit += item.estimatedProfit;
-        acc.unsoldQty += item.unsoldQty;
-        return acc;
-      }, {
-        totalInvestment: 0,
-        paidEarnings: 0,
-        unpaidValue: 0,
-        soldValue: 0,
-        unsoldValue: 0,
-        expectedAllPaid: 0,
-        estimatedProfit: 0,
-        unsoldQty: 0
-      });
-
-      document.getElementById('totalInvestment').textContent = formatMoney(totals.totalInvestment);
-      document.getElementById('paidEarnings').textContent = formatMoney(totals.paidEarnings);
-      document.getElementById('unpaidValue').textContent = formatMoney(totals.unpaidValue);
-      document.getElementById('soldValue').textContent = formatMoney(totals.soldValue);
-      document.getElementById('unsoldValue').textContent = formatMoney(totals.unsoldValue);
-      document.getElementById('expectedAllPaid').textContent = formatMoney(totals.expectedAllPaid);
-      document.getElementById('estimatedProfit').textContent = formatMoney(totals.estimatedProfit);
-      document.getElementById('unsoldQty').textContent = totals.unsoldQty;
-    }
-
-    function renderTable() {
-      const body = document.getElementById('recordsBody');
-      if (!filteredRecords.length) {
-        body.innerHTML = '<tr><td colspan="16" class="empty">No matching records.</td></tr>';
-        return;
-      }
-
-      body.innerHTML = filteredRecords
-        .map(calculateRecord)
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .map(item => {
-          const statusHtml = item.unpaidCount === 0
-            ? '<span class="pill paid">Fully Paid</span>'
-            : '<span class="pill unpaid">Has Unpaid</span>';
-
-          return `
-            <tr>
-              <td>${item.date}</td>
-              <td>${item.name}</td>
-              <td>${formatMoney(item.investment)}</td>
-              <td>${item.quantity}</td>
-              <td>${formatMoney(item.price)}</td>
-              <td>${item.ordered}</td>
-              <td>${item.paidCount}</td>
-              <td>${item.unpaidCount}</td>
-              <td>${formatMoney(item.soldValue)}</td>
-              <td>${formatMoney(item.paidEarnings)}</td>
-              <td>${formatMoney(item.unpaidValue)}</td>
-              <td>${item.unsoldQty}</td>
-              <td>${formatMoney(item.unsoldValue)}</td>
-              <td>${formatMoney(item.expectedAllPaid)}</td>
-              <td>${statusHtml}</td>
-              <td><button class="danger" onclick="deleteRecord(${item.id})">Delete</button></td>
-            </tr>
-          `;
-        })
-        .join('');
-    }
-
-    function exportCSV() {
-      const rows = filteredRecords.map(calculateRecord);
-      if (!rows.length) {
-        alert('No records to export.');
-        return;
-      }
-
-      const summary = rows.reduce((acc, item) => {
-        acc.totalInvestment += item.investment;
-        acc.paidEarnings += item.paidEarnings;
-        acc.unpaidValue += item.unpaidValue;
-        acc.soldValue += item.soldValue;
-        acc.unsoldValue += item.unsoldValue;
-        acc.expectedAllPaid += item.expectedAllPaid;
-        acc.estimatedProfit += item.estimatedProfit;
-        acc.unsoldQty += item.unsoldQty;
-        return acc;
-      }, {
-        totalInvestment: 0,
-        paidEarnings: 0,
-        unpaidValue: 0,
-        soldValue: 0,
-        unsoldValue: 0,
-        expectedAllPaid: 0,
-        estimatedProfit: 0,
-        unsoldQty: 0
-      });
-
-      const headers = [
-        'Date', 'Product', 'Investment', 'Total Qty', 'Price Per Item', 'Ordered', 'Paid Count', 'Unpaid Count',
-        'Sold Value', 'Paid Earnings', 'Unpaid Value', 'Unsold Qty', 'Unsold Value', 'Expected if All Paid', 'Estimated Profit'
-      ];
-
-      const dataLines = rows.map(item => [
-        item.date,
-        item.name,
-        item.investment,
-        item.quantity,
-        item.price,
-        item.ordered,
-        item.paidCount,
-        item.unpaidCount,
-        item.soldValue,
-        item.paidEarnings,
-        item.unpaidValue,
-        item.unsoldQty,
-        item.unsoldValue,
-        item.expectedAllPaid,
-        item.estimatedProfit
-      ]);
-
-      const summaryLines = [
-        [],
-        ['SUMMARY'],
-        ['Total Investment', summary.totalInvestment],
-        ['Paid Earnings', summary.paidEarnings],
-        ['Unpaid Value', summary.unpaidValue],
-        ['Sold Value', summary.soldValue],
-        ['Unsold Value', summary.unsoldValue],
-        ['Expected if All Paid', summary.expectedAllPaid],
-        ['Estimated Profit', summary.estimatedProfit],
-        ['Unsold Quantity', summary.unsoldQty]
-      ];
-
-      const csvRows = [headers, ...dataLines, ...summaryLines]
-        .map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(','))
-        .join('\n');
-
-      const blob = new Blob([csvRows], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'sales_tracker_export.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    resetFilters();
-  </script>
-</body>
-</html>
+      .panel { padding: 16px; border-radius: 18px; }
+      .page-title { font-size: 26px; }
+      .form-grid,
+      .summary-grid,
+      .filters-row,
+      .record-grid {
+        grid-template-columns: 1fr;
