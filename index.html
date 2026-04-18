@@ -5,447 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sales Tracker</title>
   <style>
-    :root {
-      --bg: #eef2f6;
-      --surface: #ffffff;
-      --border: #e5e7eb;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2563eb;
-      --success: #15803d;
-      --success-bg: #ecfdf3;
-      --danger: #b91c1c;
-      --danger-bg: #fef2f2;
-      --warn: #a16207;
-      --warn-bg: #fffbeb;
-      --info: #1d4ed8;
-      --info-bg: #eff6ff;
-      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-      --radius: 20px;
+    :root{
+      --bg:#eef2f6;--surface:#fff;--border:#e5e7eb;--text:#1f2937;--muted:#6b7280;
+      --primary:#2563eb;--success:#15803d;--success-bg:#ecfdf3;--danger:#b91c1c;
+      --danger-bg:#fef2f2;--warn:#a16207;--warn-bg:#fffbeb;--info:#1d4ed8;--info-bg:#eff6ff;
+      --shadow:0 10px 25px rgba(15,23,42,.08);--radius:20px;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .container{max-width:1220px;margin:0 auto;padding:16px}
+    .panel{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+    .page-title{font-size:28px;font-weight:800;margin:0 0 8px}
+    .subtitle,.mini-help,.helper{color:var(--muted);line-height:1.5}
+    .mini-help{font-size:12px;margin-top:8px}
+    .section-title{font-size:18px;font-weight:800;margin:0 0 14px}
+    .form-grid,.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .field label{display:block;font-size:13px;font-weight:700;color:#4b5563;margin-bottom:7px}
+    .field input,.field select{
+      width:100%;height:46px;padding:12px 14px;border:1px solid #d1d5db;border-radius:12px;font-size:15px;background:#fff;color:var(--text)
     }
-
-    .container {
-      max-width: 1220px;
-      margin: 0 auto;
-      padding: 20px;
+    .field input:focus,.field select:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 4px rgba(37,99,235,.08)}
+    .actions,.filter-actions,.record-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    button{
+      border:0;cursor:pointer;border-radius:12px;min-height:46px;padding:10px 18px;font-size:14px;font-weight:800
     }
-
-    h1, h2, h3, h4, p { margin-top: 0; }
-
-    .panel {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px;
-      margin-bottom: 18px;
+    .btn-primary{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+    .btn-secondary{background:linear-gradient(135deg,#22c55e,#15803d);color:#fff}
+    .btn-muted{background:#6b7280;color:#fff}
+    .btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+    .btn-light{background:#e5e7eb;color:#374151}
+    .summary-card{border-radius:16px;padding:18px;min-height:112px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+    .summary-card h3{font-size:14px;margin:0;font-weight:800}
+    .summary-card .value{font-size:18px;font-weight:900;word-break:break-word}
+    .card-investment{background:#f8fafc}.card-paid{background:var(--success-bg);color:var(--success)}
+    .card-unpaid{background:var(--danger-bg);color:var(--danger)}.card-unsold{background:var(--warn-bg);color:var(--warn)}
+    .card-expected{background:var(--info-bg);color:var(--info)}.card-sold{background:#f5f3ff;color:#6d28d9}
+    .card-profit{background:#effdf7;color:#047857}.card-qty{background:#fff7ed;color:#c2410c}
+    .investment-panel{margin-top:18px;padding:16px;background:#f8fafc;border:1px solid var(--border);border-radius:16px}
+    .investment-grid{display:grid;grid-template-columns:1.1fr 1fr auto;gap:12px;align-items:end}
+    .investment-list{margin-top:14px;display:grid;gap:10px}
+    .investment-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border:1px solid var(--border);border-radius:14px;background:#fff;padding:10px 12px}
+    .investment-name{font-weight:700;word-break:break-word}.investment-amount{font-weight:800}
+    .investment-empty{color:var(--muted);font-size:14px}
+    .totals-preview{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .preview-box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px}
+    .preview-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+    .preview-value{font-size:18px;font-weight:900}
+    .filters-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+    .desktop-table-wrap{overflow-x:auto}
+    table{width:100%;min-width:1350px;border-collapse:collapse;font-size:14px}
+    th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+    th{font-size:13px;color:#4b5563;background:#f8fafc}
+    .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;white-space:nowrap}
+    .status-paid{background:#dcfce7;color:#166534}.status-unpaid{background:#fee2e2;color:#991b1b}
+    .detail-item{font-size:12px;color:#4b5563;line-height:1.4}
+    .empty{text-align:center;padding:28px 10px;color:var(--muted);font-size:15px}
+    .mobile-records{display:none;gap:14px}
+    .record-card{border:1px solid var(--border);border-radius:18px;padding:16px;background:#fff}
+    .record-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+    .record-name{font-size:17px;font-weight:800;margin-bottom:4px}.record-date{color:var(--muted);font-size:13px}
+    .record-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .metric{background:#f8fafc;border-radius:14px;padding:12px}
+    .metric-label{font-size:12px;color:#6b7280;font-weight:700;margin-bottom:6px}
+    .metric-value{font-size:15px;font-weight:800;word-break:break-word}
+    .hidden{display:none!important}
+    @media (max-width:1024px){
+      .form-grid,.summary-grid,.totals-preview{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .filters-row{grid-template-columns:1fr 1fr}
+      .filter-actions{grid-column:1/-1}
+      .investment-grid{grid-template-columns:1fr 1fr}
+      .investment-grid button{grid-column:1/-1}
     }
-
-    .page-title {
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin-bottom: 0;
-      line-height: 1.5;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      color: #4b5563;
-      margin-bottom: 7px;
-    }
-
-    .field input,
-    .field select {
-      width: 100%;
-      height: 46px;
-      padding: 12px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 15px;
-      background: #fff;
-      color: var(--text);
-    }
-
-    .field input:focus,
-    .field select:focus {
-      outline: none;
-      border-color: #93c5fd;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      border-radius: 12px;
-      min-height: 46px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 800;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
-    .btn-secondary { background: linear-gradient(135deg, #22c55e, #15803d); color: white; }
-    .btn-muted { background: #6b7280; color: white; }
-    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-    .btn-light { background: #e5e7eb; color: #374151; }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .summary-card {
-      border-radius: 16px;
-      padding: 18px;
-      min-height: 122px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(0,0,0,0.03);
-    }
-
-    .summary-card h3 {
-      font-size: 14px;
-      margin: 0;
-      font-weight: 800;
-      line-height: 1.3;
-    }
-
-    .summary-card .value {
-      font-size: 18px;
-      font-weight: 900;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-
-    .card-investment { background: #f8fafc; color: #1f2937; }
-    .card-paid { background: var(--success-bg); color: var(--success); }
-    .card-unpaid { background: var(--danger-bg); color: var(--danger); }
-    .card-unsold { background: var(--warn-bg); color: var(--warn); }
-    .card-expected { background: var(--info-bg); color: var(--info); }
-    .card-sold { background: #f5f3ff; color: #6d28d9; }
-    .card-profit { background: #effdf7; color: #047857; }
-    .card-qty { background: #fff7ed; color: #c2410c; }
-
-    .investment-panel {
-      margin-top: 18px;
-      padding: 16px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-    }
-
-    .investment-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .investment-list {
-      margin-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .investment-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 10px;
-      align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: white;
-      padding: 10px 12px;
-    }
-
-    .investment-name {
-      font-weight: 700;
-      word-break: break-word;
-    }
-
-    .investment-amount {
-      font-weight: 800;
-      color: #111827;
-    }
-
-    .investment-empty {
-      color: var(--muted);
-      font-size: 14px;
-      padding: 6px 0;
-    }
-
-    .totals-preview {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .preview-box {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .preview-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .preview-value {
-      font-size: 18px;
-      font-weight: 900;
-    }
-
-    .filters-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    .filter-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .desktop-table-wrap {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      min-width: 1350px;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-
-    th {
-      font-size: 13px;
-      color: #4b5563;
-      background: #f8fafc;
-      position: sticky;
-      top: 0;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .status-paid { background: #dcfce7; color: #166534; }
-    .status-unpaid { background: #fee2e2; color: #991b1b; }
-
-    .detail-list {
-      display: grid;
-      gap: 4px;
-      min-width: 180px;
-    }
-
-    .detail-item {
-      font-size: 12px;
-      color: #4b5563;
-      line-height: 1.4;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 28px 10px;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .mobile-records {
-      display: none;
-      gap: 14px;
-    }
-
-    .record-card {
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px;
-      background: #fff;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
-    }
-
-    .record-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .record-name {
-      font-size: 17px;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .record-date {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .record-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .metric {
-      background: #f8fafc;
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    .metric-label {
-      font-size: 12px;
-      color: #6b7280;
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1.2;
-    }
-
-    .metric-value {
-      font-size: 15px;
-      font-weight: 800;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-
-    .record-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .helper {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 1024px) {
-      .form-grid,
-      .summary-grid,
-      .totals-preview {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .filters-row {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .filter-actions {
-        grid-column: 1 / -1;
-      }
-
-      .investment-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .investment-grid button {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .container { padding: 14px; }
-      .panel { padding: 16px; border-radius: 18px; }
-      .page-title { font-size: 26px; }
-      .form-grid,
-      .summary-grid,
-      .filters-row,
-      .record-grid,
-      .totals-preview,
-      .investment-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .actions button,
-      .filter-actions button,
-      .record-actions button,
-      .investment-grid button {
-        width: 100%;
-      }
-
-      .desktop-table-wrap { display: none; }
-      .mobile-records { display: grid; }
-
-      .record-top,
-      .investment-row {
-        flex-direction: column;
-        align-items: stretch;
-        grid-template-columns: 1fr;
-      }
-
-      .summary-card {
-        min-height: auto;
-      }
+    @media (max-width:700px){
+      .container{padding:12px}.panel{padding:16px;border-radius:18px}.page-title{font-size:24px}
+      .form-grid,.summary-grid,.filters-row,.record-grid,.totals-preview,.investment-grid{grid-template-columns:1fr}
+      .actions button,.filter-actions button,.record-actions button,.investment-grid button{width:100%}
+      .desktop-table-wrap{display:none}.mobile-records{display:grid}
+      .investment-row{grid-template-columns:1fr}
+      .summary-card{min-height:auto}
     }
   </style>
 </head>
@@ -454,86 +91,48 @@
     <div class="panel">
       <h1 class="page-title">Sales Tracker</h1>
       <p class="subtitle">Track whole-batch investment, itemized expenses, sold items, paid orders, unpaid orders, unsold stock, date range filters, and export to Excel-ready CSV.</p>
+      <div class="mini-help">
+        Quick guide: 1) Choose investment mode. 2) Fill product, quantity, price, ordered, and paid. 3) If using itemized mode, add expense name and amount, then press <b>Add Expense</b>. 4) Press <b>Add Record</b> to save. 5) Use date filters if needed. Unsold quantity is total items minus ordered. Unpaid is ordered minus paid.
+      </div>
     </div>
 
     <div class="panel">
       <h2 class="section-title">Add Product Record</h2>
       <div class="form-grid">
-        <div class="field">
-          <label for="recordDate">Date</label>
-          <input type="date" id="recordDate" />
-        </div>
-        <div class="field">
-          <label for="productName">Product Name</label>
-          <input type="text" id="productName" placeholder="e.g. Adobo" />
-        </div>
-        <div class="field">
-          <label for="investmentMode">Investment Mode</label>
-          <select id="investmentMode" onchange="updateInvestmentModeUI()">
+        <div class="field"><label for="recordDate">Date</label><input type="date" id="recordDate"></div>
+        <div class="field"><label for="productName">Product Name</label><input type="text" id="productName" placeholder="e.g. Adobo"></div>
+        <div class="field"><label for="investmentMode">Investment Mode</label>
+          <select id="investmentMode">
             <option value="manual">Manual Total Only</option>
             <option value="itemized">Itemized Only</option>
             <option value="both">Both Manual + Itemized</option>
           </select>
         </div>
-        <div class="field" id="manualInvestmentField">
-          <label for="manualInvestment">Manual Investment Total</label>
-          <input type="number" id="manualInvestment" min="0" step="0.01" placeholder="e.g. 600" />
-        </div>
-        <div class="field">
-          <label for="quantity">Total Items in Batch</label>
-          <input type="number" id="quantity" min="0" step="1" placeholder="e.g. 10" />
-        </div>
-        <div class="field">
-          <label for="price">Selling Price per Item</label>
-          <input type="number" id="price" min="0" step="0.01" placeholder="e.g. 100" />
-        </div>
-        <div class="field">
-          <label for="ordered">Items Ordered / Sold</label>
-          <input type="number" id="ordered" min="0" step="1" placeholder="e.g. 5" />
-        </div>
-        <div class="field">
-          <label for="paidCount">Paid Items Count</label>
-          <input type="number" id="paidCount" min="0" step="1" placeholder="e.g. 3" />
-        </div>
+        <div class="field" id="manualInvestmentField"><label for="manualInvestment">Manual Investment Total</label><input type="number" id="manualInvestment" min="0" step="0.01" placeholder="e.g. 600"></div>
+        <div class="field"><label for="quantity">Total Items in Batch</label><input type="number" id="quantity" min="0" step="1" placeholder="e.g. 10"></div>
+        <div class="field"><label for="price">Selling Price per Item</label><input type="number" id="price" min="0" step="0.01" placeholder="e.g. 100"></div>
+        <div class="field"><label for="ordered">Items Ordered / Sold</label><input type="number" id="ordered" min="0" step="1" placeholder="e.g. 5"></div>
+        <div class="field"><label for="paidCount">Paid Items Count</label><input type="number" id="paidCount" min="0" step="1" placeholder="e.g. 3"></div>
       </div>
 
       <div class="investment-panel">
-        <h3 class="section-title" style="margin-bottom: 12px;">Itemized Investment</h3>
+        <h3 class="section-title" style="margin-bottom:12px;">Itemized Investment</h3>
         <div class="investment-grid" id="itemizedArea">
-          <div class="field">
-            <label for="itemCostName">Expense Name</label>
-            <input type="text" id="itemCostName" placeholder="e.g. Chicken, Packaging, Gas" />
-          </div>
-          <div class="field">
-            <label for="itemCostAmount">Expense Amount</label>
-            <input type="number" id="itemCostAmount" min="0" step="0.01" placeholder="e.g. 120" />
-          </div>
-          <button type="button" class="btn-light" onclick="addInvestmentItem()">Add Expense</button>
+          <div class="field"><label for="itemCostName">Expense Name</label><input type="text" id="itemCostName" placeholder="e.g. Chicken, Packaging, Gas"></div>
+          <div class="field"><label for="itemCostAmount">Expense Amount</label><input type="number" id="itemCostAmount" min="0" step="0.01" placeholder="e.g. 120"></div>
+          <button type="button" class="btn-light" id="addExpenseBtn">Add Expense</button>
         </div>
-
-        <div class="investment-list" id="investmentList">
-          <div class="investment-empty">No itemized expenses yet.</div>
-        </div>
-
+        <div class="investment-list" id="investmentList"><div class="investment-empty">No itemized expenses yet.</div></div>
         <div class="totals-preview">
-          <div class="preview-box">
-            <div class="preview-label">Manual Total</div>
-            <div class="preview-value" id="manualPreview">0.00</div>
-          </div>
-          <div class="preview-box">
-            <div class="preview-label">Itemized Subtotal</div>
-            <div class="preview-value" id="itemizedPreview">0.00</div>
-          </div>
-          <div class="preview-box">
-            <div class="preview-label">Final Investment Used</div>
-            <div class="preview-value" id="finalInvestmentPreview">0.00</div>
-          </div>
+          <div class="preview-box"><div class="preview-label">Manual Total</div><div class="preview-value" id="manualPreview">0.00</div></div>
+          <div class="preview-box"><div class="preview-label">Itemized Subtotal</div><div class="preview-value" id="itemizedPreview">0.00</div></div>
+          <div class="preview-box"><div class="preview-label">Final Investment Used</div><div class="preview-value" id="finalInvestmentPreview">0.00</div></div>
         </div>
       </div>
 
       <div class="actions">
-        <button type="button" class="btn-primary" onclick="addRecord()">Add Record</button>
-        <button type="button" class="btn-muted" onclick="clearForm()">Clear Form</button>
+        <button type="button" class="btn-primary" id="addRecordBtn">Add Record</button>
+        <button type="button" class="btn-muted" id="clearFormBtn">Clear Form</button>
       </div>
       <div class="helper">Use manual total, itemized expenses, or both. Paid count cannot be greater than ordered count, and ordered count cannot be greater than total items.</div>
     </div>
@@ -554,423 +153,331 @@
     <div class="panel">
       <h2 class="section-title">Filter and Export</h2>
       <div class="filters-row">
-        <div class="field">
-          <label for="fromDate">From Date</label>
-          <input type="date" id="fromDate" />
-        </div>
-        <div class="field">
-          <label for="toDate">To Date</label>
-          <input type="date" id="toDate" />
-        </div>
+        <div class="field"><label for="fromDate">From Date</label><input type="date" id="fromDate"></div>
+        <div class="field"><label for="toDate">To Date</label><input type="date" id="toDate"></div>
         <div class="filter-actions">
-          <button type="button" class="btn-light" onclick="applyFilters()">Apply Filter</button>
-          <button type="button" class="btn-muted" onclick="resetFilters()">Reset Filter</button>
-          <button type="button" class="btn-secondary" onclick="exportCSV()">Export to Excel</button>
+          <button type="button" class="btn-light" id="applyFilterBtn">Apply Filter</button>
+          <button type="button" class="btn-muted" id="resetFilterBtn">Reset Filter</button>
+          <button type="button" class="btn-secondary" id="exportBtn">Export to Excel</button>
         </div>
       </div>
     </div>
 
     <div class="panel">
       <h2 class="section-title">Records</h2>
-
       <div class="desktop-table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Product</th>
-              <th>Investment Mode</th>
-              <th>Manual</th>
-              <th>Itemized Subtotal</th>
-              <th>Investment Used</th>
-              <th>Itemized Details</th>
-              <th>Total Qty</th>
-              <th>Price</th>
-              <th>Ordered</th>
-              <th>Paid</th>
-              <th>Unpaid</th>
-              <th>Sold Value</th>
-              <th>Paid Earnings</th>
-              <th>Unpaid Value</th>
-              <th>Unsold Qty</th>
-              <th>Unsold Value</th>
-              <th>Expected</th>
-              <th>Status</th>
-              <th>Action</th>
+              <th>Date</th><th>Product</th><th>Investment Mode</th><th>Manual</th><th>Itemized Subtotal</th><th>Investment Used</th><th>Itemized Details</th>
+              <th>Total Qty</th><th>Price</th><th>Ordered</th><th>Paid</th><th>Unpaid</th><th>Sold Value</th><th>Paid Earnings</th><th>Unpaid Value</th>
+              <th>Unsold Qty</th><th>Unsold Value</th><th>Expected</th><th>Status</th><th>Action</th>
             </tr>
           </thead>
-          <tbody id="recordsBodyDesktop">
-            <tr><td colspan="20" class="empty">No records yet.</td></tr>
-          </tbody>
+          <tbody id="recordsBodyDesktop"><tr><td colspan="20" class="empty">No records yet.</td></tr></tbody>
         </table>
       </div>
-
-      <div class="mobile-records" id="recordsBodyMobile">
-        <div class="empty">No records yet.</div>
-      </div>
+      <div class="mobile-records" id="recordsBodyMobile"><div class="empty">No records yet.</div></div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = 'simple_sales_tracker_records';
-    let records = loadRecords();
-    let filteredRecords = [...records];
-    let currentInvestmentItems = [];
+    (function () {
+      const STORAGE_KEY = 'simple_sales_tracker_records_v2';
+      let records = loadRecords();
+      let filteredRecords = [...records];
+      let currentInvestmentItems = [];
 
-    function todayISO() {
-      return new Date().toISOString().split('T')[0];
-    }
+      const els = {
+        recordDate: document.getElementById('recordDate'),
+        productName: document.getElementById('productName'),
+        investmentMode: document.getElementById('investmentMode'),
+        manualInvestment: document.getElementById('manualInvestment'),
+        manualInvestmentField: document.getElementById('manualInvestmentField'),
+        quantity: document.getElementById('quantity'),
+        price: document.getElementById('price'),
+        ordered: document.getElementById('ordered'),
+        paidCount: document.getElementById('paidCount'),
+        itemCostName: document.getElementById('itemCostName'),
+        itemCostAmount: document.getElementById('itemCostAmount'),
+        investmentList: document.getElementById('investmentList'),
+        itemizedArea: document.getElementById('itemizedArea'),
+        manualPreview: document.getElementById('manualPreview'),
+        itemizedPreview: document.getElementById('itemizedPreview'),
+        finalInvestmentPreview: document.getElementById('finalInvestmentPreview'),
+        fromDate: document.getElementById('fromDate'),
+        toDate: document.getElementById('toDate'),
+        recordsBodyDesktop: document.getElementById('recordsBodyDesktop'),
+        recordsBodyMobile: document.getElementById('recordsBodyMobile')
+      };
 
-    document.getElementById('recordDate').value = todayISO();
+      document.getElementById('addExpenseBtn').addEventListener('click', addInvestmentItem);
+      document.getElementById('addRecordBtn').addEventListener('click', addRecord);
+      document.getElementById('clearFormBtn').addEventListener('click', () => clearForm(true));
+      document.getElementById('applyFilterBtn').addEventListener('click', applyFilters);
+      document.getElementById('resetFilterBtn').addEventListener('click', resetFilters);
+      document.getElementById('exportBtn').addEventListener('click', exportCSV);
+      els.investmentMode.addEventListener('change', updateInvestmentModeUI);
+      els.manualInvestment.addEventListener('input', updateInvestmentPreview);
 
-    function formatMoney(value) {
-      return Number(value || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+      els.investmentList.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-remove-id]');
+        if (!btn) return;
+        removeInvestmentItem(btn.getAttribute('data-remove-id'));
       });
-    }
 
-    function loadRecords() {
-      try {
-        const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
-        return raw ? JSON.parse(raw) : [];
-      } catch (error) {
-        console.warn('Local storage unavailable. Records will stay only for this session.', error);
-        return [];
+      els.recordsBodyDesktop.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-delete-id]');
+        if (!btn) return;
+        deleteRecord(btn.getAttribute('data-delete-id'));
+      });
+
+      els.recordsBodyMobile.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-delete-id]');
+        if (!btn) return;
+        deleteRecord(btn.getAttribute('data-delete-id'));
+      });
+
+      function todayISO() { return new Date().toISOString().split('T')[0]; }
+      els.recordDate.value = todayISO();
+
+      function formatMoney(value) {
+        return Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       }
-    }
 
-    function saveRecords() {
-      try {
-        if (window.localStorage) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function loadRecords() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (_) { return []; }
+      }
+
+      function saveRecords() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); } catch (_) {}
+      }
+
+      function getItemizedSubtotal(items = currentInvestmentItems) {
+        return items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      }
+
+      function getFinalInvestment(mode, manualValue, itemizedSubtotal) {
+        if (mode === 'manual') return manualValue;
+        if (mode === 'itemized') return itemizedSubtotal;
+        return manualValue + itemizedSubtotal;
+      }
+
+      function updateInvestmentModeUI() {
+        const mode = els.investmentMode.value;
+        els.manualInvestmentField.classList.toggle('hidden', mode === 'itemized');
+        els.itemizedArea.classList.toggle('hidden', mode === 'manual');
+        els.investmentList.classList.toggle('hidden', mode === 'manual');
+        renderInvestmentItems();
+        updateInvestmentPreview();
+      }
+
+      function renderInvestmentItems() {
+        const mode = els.investmentMode.value;
+        if (mode === 'manual') {
+          els.investmentList.innerHTML = '<div class="investment-empty">Itemized expenses are hidden in Manual Total Only mode.</div>';
+          return;
         }
-      } catch (error) {
-        console.warn('Could not save to local storage.', error);
-      }
-    }
-
-    function getManualInvestment() {
-      return Number(document.getElementById('manualInvestment').value || 0);
-    }
-
-    function getItemizedSubtotal(items = currentInvestmentItems) {
-      return items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    }
-
-    function getFinalInvestment(mode, manualValue, itemizedSubtotal) {
-      if (mode === 'manual') return manualValue;
-      if (mode === 'itemized') return itemizedSubtotal;
-      return manualValue + itemizedSubtotal;
-    }
-
-    function calculateRecord(item) {
-      const manualInvestment = Number(item.manualInvestment || 0);
-      const itemizedItems = Array.isArray(item.investmentItems) ? item.investmentItems : [];
-      const itemizedSubtotal = getItemizedSubtotal(itemizedItems);
-      const investmentMode = item.investmentMode || 'manual';
-      const investment = getFinalInvestment(investmentMode, manualInvestment, itemizedSubtotal);
-      const quantity = Number(item.quantity || 0);
-      const price = Number(item.price || 0);
-      const ordered = Number(item.ordered || 0);
-      const paidCount = Number(item.paidCount || 0);
-      const unpaidCount = Math.max(ordered - paidCount, 0);
-      const soldValue = ordered * price;
-      const paidEarnings = paidCount * price;
-      const unpaidValue = unpaidCount * price;
-      const unsoldQty = Math.max(quantity - ordered, 0);
-      const unsoldValue = unsoldQty * price;
-      const expectedAllPaid = soldValue;
-      const estimatedProfit = soldValue - investment;
-
-      return {
-        ...item,
-        investmentMode,
-        manualInvestment,
-        itemizedItems,
-        itemizedSubtotal,
-        investment,
-        quantity,
-        price,
-        ordered,
-        paidCount,
-        unpaidCount,
-        soldValue,
-        paidEarnings,
-        unpaidValue,
-        unsoldQty,
-        unsoldValue,
-        expectedAllPaid,
-        estimatedProfit
-      };
-    }
-
-    function updateInvestmentModeUI() {
-      const mode = document.getElementById('investmentMode').value;
-      const manualField = document.getElementById('manualInvestmentField');
-      const itemizedArea = document.getElementById('itemizedArea');
-      const investmentList = document.getElementById('investmentList');
-
-      manualField.classList.toggle('hidden', mode === 'itemized');
-      itemizedArea.classList.toggle('hidden', mode === 'manual');
-      investmentList.classList.toggle('hidden', mode === 'manual');
-      renderInvestmentItems();
-      updateInvestmentPreview();
-    }
-
-    function addInvestmentItem() {
-      const nameInput = document.getElementById('itemCostName');
-      const amountInput = document.getElementById('itemCostAmount');
-      const name = nameInput.value.trim();
-      const amount = Number(amountInput.value || 0);
-
-      if (!name) {
-        alert('Please enter an expense name.');
-        return;
-      }
-      if (isNaN(amount) || amount <= 0) {
-        alert('Please enter a valid expense amount greater than 0.');
-        return;
+        if (!currentInvestmentItems.length) {
+          els.investmentList.innerHTML = '<div class="investment-empty">No itemized expenses yet.</div>';
+          return;
+        }
+        els.investmentList.innerHTML = currentInvestmentItems.map(item => `
+          <div class="investment-row">
+            <div class="investment-name">${escapeHtml(item.name)}</div>
+            <div class="investment-amount">${formatMoney(item.amount)}</div>
+            <button type="button" class="btn-danger" data-remove-id="${escapeHtml(String(item.id))}">Remove</button>
+          </div>
+        `).join('');
       }
 
-      currentInvestmentItems.push({ id: Date.now() + Math.random(), name, amount });
-      nameInput.value = '';
-      amountInput.value = '';
-      renderInvestmentItems();
-      updateInvestmentPreview();
-    }
-
-    function removeInvestmentItem(id) {
-      currentInvestmentItems = currentInvestmentItems.filter(item => item.id !== id);
-      renderInvestmentItems();
-      updateInvestmentPreview();
-    }
-
-    function renderInvestmentItems() {
-      const list = document.getElementById('investmentList');
-      const mode = document.getElementById('investmentMode').value;
-
-      if (mode === 'manual') {
-        list.innerHTML = '<div class="investment-empty">Itemized expenses are hidden in Manual Total Only mode.</div>';
-        return;
+      function updateInvestmentPreview() {
+        const manual = Number(els.manualInvestment.value || 0);
+        const itemized = getItemizedSubtotal();
+        const finalInvestment = getFinalInvestment(els.investmentMode.value, manual, itemized);
+        els.manualPreview.textContent = formatMoney(manual);
+        els.itemizedPreview.textContent = formatMoney(itemized);
+        els.finalInvestmentPreview.textContent = formatMoney(finalInvestment);
       }
 
-      if (!currentInvestmentItems.length) {
-        list.innerHTML = '<div class="investment-empty">No itemized expenses yet.</div>';
-        return;
+      function addInvestmentItem() {
+        const name = els.itemCostName.value.trim();
+        const amount = Number(els.itemCostAmount.value || 0);
+        if (!name) return alert('Please enter an expense name.');
+        if (Number.isNaN(amount) || amount <= 0) return alert('Please enter a valid expense amount greater than 0.');
+        currentInvestmentItems.push({ id: Date.now() + Math.random(), name, amount });
+        els.itemCostName.value = '';
+        els.itemCostAmount.value = '';
+        renderInvestmentItems();
+        updateInvestmentPreview();
       }
 
-      list.innerHTML = currentInvestmentItems.map(item => `
-        <div class="investment-row">
-          <div class="investment-name">${escapeHtml(item.name)}</div>
-          <div class="investment-amount">${formatMoney(item.amount)}</div>
-          <button class="btn-danger" onclick="removeInvestmentItem(${JSON.stringify(String(item.id))})">Remove</button>
-        </div>
-      `).join('');
-    }
-
-    function updateInvestmentPreview() {
-      const mode = document.getElementById('investmentMode').value;
-      const manual = getManualInvestment();
-      const itemizedSubtotal = getItemizedSubtotal();
-      const finalInvestment = getFinalInvestment(mode, manual, itemizedSubtotal);
-
-      document.getElementById('manualPreview').textContent = formatMoney(manual);
-      document.getElementById('itemizedPreview').textContent = formatMoney(itemizedSubtotal);
-      document.getElementById('finalInvestmentPreview').textContent = formatMoney(finalInvestment);
-    }
-
-    function validateInputs(data) {
-      const { date, name, mode, manualInvestment, quantity, price, ordered, paidCount, itemizedItems } = data;
-
-      if (!date || !name) {
-        alert('Please enter both date and product name.');
-        return false;
+      function removeInvestmentItem(id) {
+        currentInvestmentItems = currentInvestmentItems.filter(item => String(item.id) !== String(id));
+        renderInvestmentItems();
+        updateInvestmentPreview();
       }
 
-      if ([quantity, price, ordered, paidCount].some(v => v === '' || isNaN(v))) {
-        alert('Please fill in all required number fields.');
-        return false;
+      function validateInputs(data) {
+        if (!data.date || !data.name) return alert('Please enter both date and product name.'), false;
+        if ([data.quantity, data.price, data.ordered, data.paidCount].some(v => Number.isNaN(v))) return alert('Please fill in all required number fields.'), false;
+        if (data.ordered > data.quantity) return alert('Ordered items cannot be greater than total items in batch.'), false;
+        if (data.paidCount > data.ordered) return alert('Paid count cannot be greater than ordered count.'), false;
+        if ([data.manualInvestment, data.quantity, data.price, data.ordered, data.paidCount].some(v => Number(v) < 0)) return alert('Values cannot be negative.'), false;
+        if (data.mode === 'manual' && data.manualInvestment <= 0) return alert('Please enter a manual investment total.'), false;
+        if (data.mode === 'itemized' && getItemizedSubtotal(data.itemizedItems) <= 0) return alert('Please add at least one itemized expense.'), false;
+        if (data.mode === 'both' && data.manualInvestment <= 0 && getItemizedSubtotal(data.itemizedItems) <= 0) return alert('Please enter a manual investment, itemized expenses, or both.'), false;
+        return true;
       }
 
-      if (Number(ordered) > Number(quantity)) {
-        alert('Ordered items cannot be greater than total items in batch.');
-        return false;
+      function addRecord() {
+        const data = {
+          date: els.recordDate.value,
+          name: els.productName.value.trim(),
+          mode: els.investmentMode.value,
+          manualInvestment: Number(els.manualInvestment.value || 0),
+          quantity: Number(els.quantity.value),
+          price: Number(els.price.value),
+          ordered: Number(els.ordered.value),
+          paidCount: Number(els.paidCount.value),
+          itemizedItems: currentInvestmentItems.map(item => ({ ...item }))
+        };
+        if (!validateInputs(data)) return;
+        records.push({
+          id: Date.now(),
+          date: data.date,
+          name: data.name,
+          investmentMode: data.mode,
+          manualInvestment: data.manualInvestment,
+          investmentItems: data.itemizedItems,
+          quantity: data.quantity,
+          price: data.price,
+          ordered: data.ordered,
+          paidCount: data.paidCount
+        });
+        saveRecords();
+        clearForm(false);
+        applyFilters();
       }
 
-      if (Number(paidCount) > Number(ordered)) {
-        alert('Paid count cannot be greater than ordered count.');
-        return false;
+      function clearForm(resetDate) {
+        if (resetDate) els.recordDate.value = todayISO();
+        els.productName.value = '';
+        els.investmentMode.value = 'manual';
+        els.manualInvestment.value = '';
+        els.quantity.value = '';
+        els.price.value = '';
+        els.ordered.value = '';
+        els.paidCount.value = '';
+        els.itemCostName.value = '';
+        els.itemCostAmount.value = '';
+        currentInvestmentItems = [];
+        updateInvestmentModeUI();
+        updateInvestmentPreview();
       }
 
-      if ([manualInvestment, quantity, price, ordered, paidCount].some(v => Number(v) < 0)) {
-        alert('Values cannot be negative.');
-        return false;
+      function calculateRecord(item) {
+        const manualInvestment = Number(item.manualInvestment || 0);
+        const itemizedItems = Array.isArray(item.investmentItems) ? item.investmentItems : [];
+        const itemizedSubtotal = getItemizedSubtotal(itemizedItems);
+        const investmentMode = item.investmentMode || 'manual';
+        const investment = getFinalInvestment(investmentMode, manualInvestment, itemizedSubtotal);
+        const quantity = Number(item.quantity || 0);
+        const price = Number(item.price || 0);
+        const ordered = Number(item.ordered || 0);
+        const paidCount = Number(item.paidCount || 0);
+        const unpaidCount = Math.max(ordered - paidCount, 0);
+        const soldValue = ordered * price;
+        const paidEarnings = paidCount * price;
+        const unpaidValue = unpaidCount * price;
+        const unsoldQty = Math.max(quantity - ordered, 0);
+        const unsoldValue = unsoldQty * price;
+        const expectedAllPaid = soldValue;
+        const estimatedProfit = soldValue - investment;
+        return { ...item, manualInvestment, itemizedItems, itemizedSubtotal, investmentMode, investment, quantity, price, ordered, paidCount, unpaidCount, soldValue, paidEarnings, unpaidValue, unsoldQty, unsoldValue, expectedAllPaid, estimatedProfit };
       }
 
-      if (mode === 'manual' && Number(manualInvestment) <= 0) {
-        alert('Please enter a manual investment total.');
-        return false;
+      function formatMode(mode) {
+        if (mode === 'itemized') return 'Itemized Only';
+        if (mode === 'both') return 'Both';
+        return 'Manual Only';
       }
 
-      if (mode === 'itemized' && (!itemizedItems.length || getItemizedSubtotal(itemizedItems) <= 0)) {
-        alert('Please add at least one itemized expense.');
-        return false;
+      function itemizedDetailsHtml(items) {
+        if (!items.length) return '<div class="detail-item">No itemized entries</div>';
+        return items.map(it => `<div class="detail-item">${escapeHtml(it.name)}: ${formatMoney(it.amount)}</div>`).join('');
       }
 
-      if (mode === 'both' && Number(manualInvestment) <= 0 && getItemizedSubtotal(itemizedItems) <= 0) {
-        alert('Please enter a manual investment, itemized expenses, or both.');
-        return false;
+      function itemizedDetailsText(items) {
+        if (!items.length) return 'No itemized entries';
+        return items.map(it => `${it.name}: ${it.amount}`).join(' | ');
       }
 
-      return true;
-    }
-
-    function addRecord() {
-      const data = {
-        date: document.getElementById('recordDate').value,
-        name: document.getElementById('productName').value.trim(),
-        mode: document.getElementById('investmentMode').value,
-        manualInvestment: Number(document.getElementById('manualInvestment').value || 0),
-        quantity: Number(document.getElementById('quantity').value),
-        price: Number(document.getElementById('price').value),
-        ordered: Number(document.getElementById('ordered').value),
-        paidCount: Number(document.getElementById('paidCount').value),
-        itemizedItems: currentInvestmentItems.map(item => ({ ...item }))
-      };
-
-      if (!validateInputs(data)) return;
-
-      records.push({
-        id: Date.now(),
-        date: data.date,
-        name: data.name,
-        investmentMode: data.mode,
-        manualInvestment: data.manualInvestment,
-        investmentItems: data.itemizedItems,
-        quantity: data.quantity,
-        price: data.price,
-        ordered: data.ordered,
-        paidCount: data.paidCount
-      });
-
-      saveRecords();
-      clearForm(false);
-      applyFilters();
-    }
-
-    function clearForm(resetDate = true) {
-      if (resetDate) document.getElementById('recordDate').value = todayISO();
-      document.getElementById('productName').value = '';
-      document.getElementById('investmentMode').value = 'manual';
-      document.getElementById('manualInvestment').value = '';
-      document.getElementById('quantity').value = '';
-      document.getElementById('price').value = '';
-      document.getElementById('ordered').value = '';
-      document.getElementById('paidCount').value = '';
-      document.getElementById('itemCostName').value = '';
-      document.getElementById('itemCostAmount').value = '';
-      currentInvestmentItems = [];
-      updateInvestmentModeUI();
-      updateInvestmentPreview();
-    }
-
-    function deleteRecord(id) {
-      if (!confirm('Delete this record?')) return;
-      records = records.filter(r => r.id !== id);
-      saveRecords();
-      applyFilters();
-    }
-
-    function inDateRange(recordDate, fromDate, toDate) {
-      if (!fromDate && !toDate) return true;
-      const date = new Date(recordDate + 'T00:00:00');
-      if (fromDate) {
-        const from = new Date(fromDate + 'T00:00:00');
-        if (date < from) return false;
-      }
-      if (toDate) {
-        const to = new Date(toDate + 'T23:59:59');
-        if (date > to) return false;
-      }
-      return true;
-    }
-
-    function applyFilters() {
-      const fromDate = document.getElementById('fromDate').value;
-      const toDate = document.getElementById('toDate').value;
-      filteredRecords = records.filter(r => inDateRange(r.date, fromDate, toDate));
-      renderAll();
-    }
-
-    function resetFilters() {
-      document.getElementById('fromDate').value = '';
-      document.getElementById('toDate').value = '';
-      filteredRecords = [...records];
-      renderAll();
-    }
-
-    function renderSummary() {
-      const totals = filteredRecords.map(calculateRecord).reduce((acc, item) => {
-        acc.totalInvestment += item.investment;
-        acc.paidEarnings += item.paidEarnings;
-        acc.unpaidValue += item.unpaidValue;
-        acc.soldValue += item.soldValue;
-        acc.unsoldValue += item.unsoldValue;
-        acc.expectedAllPaid += item.expectedAllPaid;
-        acc.estimatedProfit += item.estimatedProfit;
-        acc.unsoldQty += item.unsoldQty;
-        return acc;
-      }, {
-        totalInvestment: 0,
-        paidEarnings: 0,
-        unpaidValue: 0,
-        soldValue: 0,
-        unsoldValue: 0,
-        expectedAllPaid: 0,
-        estimatedProfit: 0,
-        unsoldQty: 0
-      });
-
-      document.getElementById('totalInvestment').textContent = formatMoney(totals.totalInvestment);
-      document.getElementById('paidEarnings').textContent = formatMoney(totals.paidEarnings);
-      document.getElementById('unpaidValue').textContent = formatMoney(totals.unpaidValue);
-      document.getElementById('soldValue').textContent = formatMoney(totals.soldValue);
-      document.getElementById('expectedAllPaid').textContent = formatMoney(totals.expectedAllPaid);
-      document.getElementById('estimatedProfit').textContent = formatMoney(totals.estimatedProfit);
-      document.getElementById('unsoldQty').textContent = totals.unsoldQty;
-      document.getElementById('unsoldCardValue').textContent = `${totals.unsoldQty} (${formatMoney(totals.unsoldValue)})`;
-    }
-
-    function formatMode(mode) {
-      if (mode === 'itemized') return 'Itemized Only';
-      if (mode === 'both') return 'Both';
-      return 'Manual Only';
-    }
-
-    function itemizedDetailsHtml(items) {
-      if (!items || !items.length) return '<div class="detail-item">No itemized entries</div>';
-      return items.map(it => `<div class="detail-item">${escapeHtml(it.name)}: ${formatMoney(it.amount)}</div>`).join('');
-    }
-
-    function itemizedDetailsText(items) {
-      if (!items || !items.length) return 'No itemized entries';
-      return items.map(it => `${it.name}: ${it.amount}`).join(' | ');
-    }
-
-    function renderDesktopTable(rows) {
-      const body = document.getElementById('recordsBodyDesktop');
-      if (!rows.length) {
-        body.innerHTML = '<tr><td colspan="20" class="empty">No matching records.</td></tr>';
-        return;
+      function deleteRecord(id) {
+        if (!confirm('Delete this record?')) return;
+        records = records.filter(r => String(r.id) !== String(id));
+        saveRecords();
+        applyFilters();
       }
 
-      body.innerHTML = rows.map(item => {
-        const statusHtml = item.unpaidCount === 0
-          ? '<span class="status-pill status-paid">Fully Paid</span>'
-          : '<span class="status-pill status-unpaid">Has Unpaid</span>';
+      function inDateRange(recordDate, fromDate, toDate) {
+        if (!fromDate && !toDate) return true;
+        const date = new Date(recordDate + 'T00:00:00');
+        if (fromDate && date < new Date(fromDate + 'T00:00:00')) return false;
+        if (toDate && date > new Date(toDate + 'T23:59:59')) return false;
+        return true;
+      }
 
-        return `
+      function applyFilters() {
+        filteredRecords = records.filter(r => inDateRange(r.date, els.fromDate.value, els.toDate.value));
+        renderAll();
+      }
+
+      function resetFilters() {
+        els.fromDate.value = '';
+        els.toDate.value = '';
+        filteredRecords = [...records];
+        renderAll();
+      }
+
+      function renderSummary() {
+        const totals = filteredRecords.map(calculateRecord).reduce((acc, item) => {
+          acc.totalInvestment += item.investment;
+          acc.paidEarnings += item.paidEarnings;
+          acc.unpaidValue += item.unpaidValue;
+          acc.soldValue += item.soldValue;
+          acc.unsoldValue += item.unsoldValue;
+          acc.expectedAllPaid += item.expectedAllPaid;
+          acc.estimatedProfit += item.estimatedProfit;
+          acc.unsoldQty += item.unsoldQty;
+          return acc;
+        }, { totalInvestment:0, paidEarnings:0, unpaidValue:0, soldValue:0, unsoldValue:0, expectedAllPaid:0, estimatedProfit:0, unsoldQty:0 });
+
+        document.getElementById('totalInvestment').textContent = formatMoney(totals.totalInvestment);
+        document.getElementById('paidEarnings').textContent = formatMoney(totals.paidEarnings);
+        document.getElementById('unpaidValue').textContent = formatMoney(totals.unpaidValue);
+        document.getElementById('soldValue').textContent = formatMoney(totals.soldValue);
+        document.getElementById('expectedAllPaid').textContent = formatMoney(totals.expectedAllPaid);
+        document.getElementById('estimatedProfit').textContent = formatMoney(totals.estimatedProfit);
+        document.getElementById('unsoldQty').textContent = totals.unsoldQty;
+        document.getElementById('unsoldCardValue').textContent = `${totals.unsoldQty} (${formatMoney(totals.unsoldValue)})`;
+      }
+
+      function renderDesktopTable(rows) {
+        if (!rows.length) {
+          els.recordsBodyDesktop.innerHTML = '<tr><td colspan="20" class="empty">No matching records.</td></tr>';
+          return;
+        }
+        els.recordsBodyDesktop.innerHTML = rows.map(item => `
           <tr>
             <td>${item.date}</td>
             <td>${escapeHtml(item.name)}</td>
@@ -978,47 +485,27 @@
             <td>${formatMoney(item.manualInvestment)}</td>
             <td>${formatMoney(item.itemizedSubtotal)}</td>
             <td>${formatMoney(item.investment)}</td>
-            <td><div class="detail-list">${itemizedDetailsHtml(item.itemizedItems)}</div></td>
-            <td>${item.quantity}</td>
-            <td>${formatMoney(item.price)}</td>
-            <td>${item.ordered}</td>
-            <td>${item.paidCount}</td>
-            <td>${item.unpaidCount}</td>
-            <td>${formatMoney(item.soldValue)}</td>
-            <td>${formatMoney(item.paidEarnings)}</td>
-            <td>${formatMoney(item.unpaidValue)}</td>
-            <td>${item.unsoldQty}</td>
-            <td>${formatMoney(item.unsoldValue)}</td>
-            <td>${formatMoney(item.expectedAllPaid)}</td>
-            <td>${statusHtml}</td>
-            <td><button class="btn-danger" onclick="deleteRecord(${item.id})">Delete</button></td>
+            <td>${itemizedDetailsHtml(item.itemizedItems)}</td>
+            <td>${item.quantity}</td><td>${formatMoney(item.price)}</td><td>${item.ordered}</td><td>${item.paidCount}</td><td>${item.unpaidCount}</td>
+            <td>${formatMoney(item.soldValue)}</td><td>${formatMoney(item.paidEarnings)}</td><td>${formatMoney(item.unpaidValue)}</td>
+            <td>${item.unsoldQty}</td><td>${formatMoney(item.unsoldValue)}</td><td>${formatMoney(item.expectedAllPaid)}</td>
+            <td>${item.unpaidCount === 0 ? '<span class="status-pill status-paid">Fully Paid</span>' : '<span class="status-pill status-unpaid">Has Unpaid</span>'}</td>
+            <td><button type="button" class="btn-danger" data-delete-id="${item.id}">Delete</button></td>
           </tr>
-        `;
-      }).join('');
-    }
-
-    function renderMobileCards(rows) {
-      const body = document.getElementById('recordsBodyMobile');
-      if (!rows.length) {
-        body.innerHTML = '<div class="empty">No matching records.</div>';
-        return;
+        `).join('');
       }
 
-      body.innerHTML = rows.map(item => {
-        const statusHtml = item.unpaidCount === 0
-          ? '<span class="status-pill status-paid">Fully Paid</span>'
-          : '<span class="status-pill status-unpaid">Has Unpaid</span>';
-
-        return `
+      function renderMobileCards(rows) {
+        if (!rows.length) {
+          els.recordsBodyMobile.innerHTML = '<div class="empty">No matching records.</div>';
+          return;
+        }
+        els.recordsBodyMobile.innerHTML = rows.map(item => `
           <div class="record-card">
             <div class="record-top">
-              <div>
-                <div class="record-name">${escapeHtml(item.name)}</div>
-                <div class="record-date">${item.date}</div>
-              </div>
-              <div>${statusHtml}</div>
+              <div><div class="record-name">${escapeHtml(item.name)}</div><div class="record-date">${item.date}</div></div>
+              <div>${item.unpaidCount === 0 ? '<span class="status-pill status-paid">Fully Paid</span>' : '<span class="status-pill status-unpaid">Has Unpaid</span>'}</div>
             </div>
-
             <div class="record-grid">
               <div class="metric"><div class="metric-label">Investment Mode</div><div class="metric-value">${formatMode(item.investmentMode)}</div></div>
               <div class="metric"><div class="metric-label">Investment Used</div><div class="metric-value">${formatMoney(item.investment)}</div></div>
@@ -1035,125 +522,36 @@
               <div class="metric"><div class="metric-label">Unsold Qty</div><div class="metric-value">${item.unsoldQty}</div></div>
               <div class="metric"><div class="metric-label">Unsold Value</div><div class="metric-value">${formatMoney(item.unsoldValue)}</div></div>
               <div class="metric"><div class="metric-label">Expected</div><div class="metric-value">${formatMoney(item.expectedAllPaid)}</div></div>
-              <div class="metric" style="grid-column: 1 / -1;"><div class="metric-label">Itemized Details</div><div class="metric-value" style="font-size:13px; font-weight:700;">${itemizedDetailsHtml(item.itemizedItems)}</div></div>
+              <div class="metric" style="grid-column:1 / -1"><div class="metric-label">Itemized Details</div><div class="metric-value" style="font-size:13px">${itemizedDetailsHtml(item.itemizedItems)}</div></div>
             </div>
-
-            <div class="record-actions">
-              <button class="btn-danger" onclick="deleteRecord(${item.id})">Delete</button>
-            </div>
+            <div class="record-actions"><button type="button" class="btn-danger" data-delete-id="${item.id}">Delete</button></div>
           </div>
-        `;
-      }).join('');
-    }
-
-    function renderAll() {
-      const rows = filteredRecords
-        .map(calculateRecord)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-      renderSummary();
-      renderDesktopTable(rows);
-      renderMobileCards(rows);
-    }
-
-    function exportCSV() {
-      const rows = filteredRecords.map(calculateRecord);
-      if (!rows.length) {
-        alert('No records to export.');
-        return;
+        `).join('');
       }
 
-      const summary = rows.reduce((acc, item) => {
-        acc.totalInvestment += item.investment;
-        acc.paidEarnings += item.paidEarnings;
-        acc.unpaidValue += item.unpaidValue;
-        acc.soldValue += item.soldValue;
-        acc.unsoldValue += item.unsoldValue;
-        acc.expectedAllPaid += item.expectedAllPaid;
-        acc.estimatedProfit += item.estimatedProfit;
-        acc.unsoldQty += item.unsoldQty;
-        return acc;
-      }, {
-        totalInvestment: 0,
-        paidEarnings: 0,
-        unpaidValue: 0,
-        soldValue: 0,
-        unsoldValue: 0,
-        expectedAllPaid: 0,
-        estimatedProfit: 0,
-        unsoldQty: 0
-      });
+      function renderAll() {
+        const rows = filteredRecords.map(calculateRecord).sort((a,b) => new Date(b.date) - new Date(a.date));
+        renderSummary();
+        renderDesktopTable(rows);
+        renderMobileCards(rows);
+      }
 
-      const headers = [
-        'Date', 'Product', 'Investment Mode', 'Manual Investment', 'Itemized Subtotal', 'Investment Used', 'Itemized Details',
-        'Total Qty', 'Price Per Item', 'Ordered', 'Paid Count', 'Unpaid Count', 'Sold Value', 'Paid Earnings', 'Unpaid Value',
-        'Unsold Qty', 'Unsold Value', 'Expected if All Paid', 'Estimated Profit'
-      ];
+      function exportCSV() {
+        const rows = filteredRecords.map(calculateRecord);
+        if (!rows.length) return alert('No records to export.');
+        const headers = ['Date','Product','Investment Mode','Manual Investment','Itemized Subtotal','Investment Used','Itemized Details','Total Qty','Price Per Item','Ordered','Paid Count','Unpaid Count','Sold Value','Paid Earnings','Unpaid Value','Unsold Qty','Unsold Value','Expected if All Paid','Estimated Profit'];
+        const dataLines = rows.map(item => [item.date,item.name,formatMode(item.investmentMode),item.manualInvestment,item.itemizedSubtotal,item.investment,itemizedDetailsText(item.itemizedItems),item.quantity,item.price,item.ordered,item.paidCount,item.unpaidCount,item.soldValue,item.paidEarnings,item.unpaidValue,item.unsoldQty,item.unsoldValue,item.expectedAllPaid,item.estimatedProfit]);
+        const csv = [headers, ...dataLines].map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'sales_tracker_export.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      }
 
-      const dataLines = rows.map(item => [
-        item.date,
-        item.name,
-        formatMode(item.investmentMode),
-        item.manualInvestment,
-        item.itemizedSubtotal,
-        item.investment,
-        itemizedDetailsText(item.itemizedItems),
-        item.quantity,
-        item.price,
-        item.ordered,
-        item.paidCount,
-        item.unpaidCount,
-        item.soldValue,
-        item.paidEarnings,
-        item.unpaidValue,
-        item.unsoldQty,
-        item.unsoldValue,
-        item.expectedAllPaid,
-        item.estimatedProfit
-      ]);
-
-      const summaryLines = [
-        [],
-        ['SUMMARY'],
-        ['Total Investment', summary.totalInvestment],
-        ['Paid Earnings', summary.paidEarnings],
-        ['Unpaid Value', summary.unpaidValue],
-        ['Sold Value', summary.soldValue],
-        ['Unsold Value', summary.unsoldValue],
-        ['Expected if All Paid', summary.expectedAllPaid],
-        ['Estimated Profit', summary.estimatedProfit],
-        ['Unsold Quantity', summary.unsoldQty]
-      ];
-
-      const csvRows = [headers, ...dataLines, ...summaryLines]
-        .map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(','))
-        .join('
-');
-
-      const blob = new Blob([csvRows], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'sales_tracker_export.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    document.getElementById('manualInvestment').addEventListener('input', updateInvestmentPreview);
-
-    updateInvestmentModeUI();
-    updateInvestmentPreview();
-    resetFilters();
+      updateInvestmentModeUI();
+      updateInvestmentPreview();
+      renderAll();
+    })();
   </script>
 </body>
 </html>
