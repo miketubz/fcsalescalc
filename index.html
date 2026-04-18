@@ -81,7 +81,8 @@
       margin-bottom: 7px;
     }
 
-    .field input {
+    .field input,
+    .field select {
       width: 100%;
       height: 46px;
       padding: 12px 14px;
@@ -92,7 +93,8 @@
       color: var(--text);
     }
 
-    .field input:focus {
+    .field input:focus,
+    .field select:focus {
       outline: none;
       border-color: #93c5fd;
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
@@ -109,8 +111,8 @@
       border: 0;
       cursor: pointer;
       border-radius: 12px;
-      height: 46px;
-      padding: 0 18px;
+      min-height: 46px;
+      padding: 10px 18px;
       font-size: 14px;
       font-weight: 800;
       transition: transform 0.15s ease, opacity 0.15s ease;
@@ -165,6 +167,80 @@
     .card-profit { background: #effdf7; color: #047857; }
     .card-qty { background: #fff7ed; color: #c2410c; }
 
+    .investment-panel {
+      margin-top: 18px;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .investment-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .investment-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .investment-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: white;
+      padding: 10px 12px;
+    }
+
+    .investment-name {
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .investment-amount {
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .investment-empty {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 6px 0;
+    }
+
+    .totals-preview {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .preview-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .preview-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .preview-value {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
     .filters-row {
       display: grid;
       grid-template-columns: 1fr 1fr auto;
@@ -184,7 +260,7 @@
 
     table {
       width: 100%;
-      min-width: 1120px;
+      min-width: 1350px;
       border-collapse: collapse;
       font-size: 14px;
     }
@@ -217,6 +293,18 @@
 
     .status-paid { background: #dcfce7; color: #166534; }
     .status-unpaid { background: #fee2e2; color: #991b1b; }
+
+    .detail-list {
+      display: grid;
+      gap: 4px;
+      min-width: 180px;
+    }
+
+    .detail-item {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.4;
+    }
 
     .empty {
       text-align: center;
@@ -290,10 +378,6 @@
       margin-top: 14px;
     }
 
-    .record-actions button {
-      flex: 1;
-    }
-
     .helper {
       color: var(--muted);
       font-size: 12px;
@@ -301,9 +385,14 @@
       line-height: 1.5;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
     @media (max-width: 1024px) {
       .form-grid,
-      .summary-grid {
+      .summary-grid,
+      .totals-preview {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -312,6 +401,14 @@
       }
 
       .filter-actions {
+        grid-column: 1 / -1;
+      }
+
+      .investment-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .investment-grid button {
         grid-column: 1 / -1;
       }
     }
@@ -323,22 +420,27 @@
       .form-grid,
       .summary-grid,
       .filters-row,
-      .record-grid {
+      .record-grid,
+      .totals-preview,
+      .investment-grid {
         grid-template-columns: 1fr;
       }
 
       .actions button,
       .filter-actions button,
-      .record-actions button {
+      .record-actions button,
+      .investment-grid button {
         width: 100%;
       }
 
       .desktop-table-wrap { display: none; }
       .mobile-records { display: grid; }
 
-      .record-top {
+      .record-top,
+      .investment-row {
         flex-direction: column;
         align-items: stretch;
+        grid-template-columns: 1fr;
       }
 
       .summary-card {
@@ -351,7 +453,7 @@
   <div class="container">
     <div class="panel">
       <h1 class="page-title">Sales Tracker</h1>
-      <p class="subtitle">Track whole-batch investment, sold items, paid orders, unpaid orders, unsold stock, date range filters, and export to Excel-ready CSV.</p>
+      <p class="subtitle">Track whole-batch investment, itemized expenses, sold items, paid orders, unpaid orders, unsold stock, date range filters, and export to Excel-ready CSV.</p>
     </div>
 
     <div class="panel">
@@ -366,8 +468,16 @@
           <input type="text" id="productName" placeholder="e.g. Adobo" />
         </div>
         <div class="field">
-          <label for="investment">Investment for Whole Batch</label>
-          <input type="number" id="investment" min="0" step="0.01" placeholder="e.g. 600" />
+          <label for="investmentMode">Investment Mode</label>
+          <select id="investmentMode" onchange="updateInvestmentModeUI()">
+            <option value="manual">Manual Total Only</option>
+            <option value="itemized">Itemized Only</option>
+            <option value="both">Both Manual + Itemized</option>
+          </select>
+        </div>
+        <div class="field" id="manualInvestmentField">
+          <label for="manualInvestment">Manual Investment Total</label>
+          <input type="number" id="manualInvestment" min="0" step="0.01" placeholder="e.g. 600" />
         </div>
         <div class="field">
           <label for="quantity">Total Items in Batch</label>
@@ -386,11 +496,46 @@
           <input type="number" id="paidCount" min="0" step="1" placeholder="e.g. 3" />
         </div>
       </div>
+
+      <div class="investment-panel">
+        <h3 class="section-title" style="margin-bottom: 12px;">Itemized Investment</h3>
+        <div class="investment-grid" id="itemizedArea">
+          <div class="field">
+            <label for="itemCostName">Expense Name</label>
+            <input type="text" id="itemCostName" placeholder="e.g. Chicken, Packaging, Gas" />
+          </div>
+          <div class="field">
+            <label for="itemCostAmount">Expense Amount</label>
+            <input type="number" id="itemCostAmount" min="0" step="0.01" placeholder="e.g. 120" />
+          </div>
+          <button class="btn-light" onclick="addInvestmentItem()">Add Expense</button>
+        </div>
+
+        <div class="investment-list" id="investmentList">
+          <div class="investment-empty">No itemized expenses yet.</div>
+        </div>
+
+        <div class="totals-preview">
+          <div class="preview-box">
+            <div class="preview-label">Manual Total</div>
+            <div class="preview-value" id="manualPreview">0.00</div>
+          </div>
+          <div class="preview-box">
+            <div class="preview-label">Itemized Subtotal</div>
+            <div class="preview-value" id="itemizedPreview">0.00</div>
+          </div>
+          <div class="preview-box">
+            <div class="preview-label">Final Investment Used</div>
+            <div class="preview-value" id="finalInvestmentPreview">0.00</div>
+          </div>
+        </div>
+      </div>
+
       <div class="actions">
         <button class="btn-primary" onclick="addRecord()">Add Record</button>
         <button class="btn-muted" onclick="clearForm()">Clear Form</button>
       </div>
-      <div class="helper">Paid count cannot be greater than ordered count, and ordered count cannot be greater than total items.</div>
+      <div class="helper">Use manual total, itemized expenses, or both. Paid count cannot be greater than ordered count, and ordered count cannot be greater than total items.</div>
     </div>
 
     <div class="panel">
@@ -434,7 +579,11 @@
             <tr>
               <th>Date</th>
               <th>Product</th>
-              <th>Investment</th>
+              <th>Investment Mode</th>
+              <th>Manual</th>
+              <th>Itemized Subtotal</th>
+              <th>Investment Used</th>
+              <th>Itemized Details</th>
               <th>Total Qty</th>
               <th>Price</th>
               <th>Ordered</th>
@@ -451,7 +600,7 @@
             </tr>
           </thead>
           <tbody id="recordsBodyDesktop">
-            <tr><td colspan="16" class="empty">No records yet.</td></tr>
+            <tr><td colspan="20" class="empty">No records yet.</td></tr>
           </tbody>
         </table>
       </div>
@@ -466,6 +615,7 @@
     const STORAGE_KEY = 'simple_sales_tracker_records';
     let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     let filteredRecords = [...records];
+    let currentInvestmentItems = [];
 
     function todayISO() {
       return new Date().toISOString().split('T')[0];
@@ -484,8 +634,26 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     }
 
+    function getManualInvestment() {
+      return Number(document.getElementById('manualInvestment').value || 0);
+    }
+
+    function getItemizedSubtotal(items = currentInvestmentItems) {
+      return items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    }
+
+    function getFinalInvestment(mode, manualValue, itemizedSubtotal) {
+      if (mode === 'manual') return manualValue;
+      if (mode === 'itemized') return itemizedSubtotal;
+      return manualValue + itemizedSubtotal;
+    }
+
     function calculateRecord(item) {
-      const investment = Number(item.investment || 0);
+      const manualInvestment = Number(item.manualInvestment || 0);
+      const itemizedItems = Array.isArray(item.investmentItems) ? item.investmentItems : [];
+      const itemizedSubtotal = getItemizedSubtotal(itemizedItems);
+      const investmentMode = item.investmentMode || 'manual';
+      const investment = getFinalInvestment(investmentMode, manualInvestment, itemizedSubtotal);
       const quantity = Number(item.quantity || 0);
       const price = Number(item.price || 0);
       const ordered = Number(item.ordered || 0);
@@ -501,6 +669,10 @@
 
       return {
         ...item,
+        investmentMode,
+        manualInvestment,
+        itemizedItems,
+        itemizedSubtotal,
         investment,
         quantity,
         price,
@@ -517,50 +689,153 @@
       };
     }
 
-    function validateInputs(date, name, investment, quantity, price, ordered, paidCount) {
+    function updateInvestmentModeUI() {
+      const mode = document.getElementById('investmentMode').value;
+      const manualField = document.getElementById('manualInvestmentField');
+      const itemizedArea = document.getElementById('itemizedArea');
+      const investmentList = document.getElementById('investmentList');
+
+      manualField.classList.toggle('hidden', mode === 'itemized');
+      itemizedArea.classList.toggle('hidden', mode === 'manual');
+      investmentList.classList.toggle('hidden', mode === 'manual');
+      renderInvestmentItems();
+      updateInvestmentPreview();
+    }
+
+    function addInvestmentItem() {
+      const nameInput = document.getElementById('itemCostName');
+      const amountInput = document.getElementById('itemCostAmount');
+      const name = nameInput.value.trim();
+      const amount = Number(amountInput.value || 0);
+
+      if (!name) {
+        alert('Please enter an expense name.');
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid expense amount greater than 0.');
+        return;
+      }
+
+      currentInvestmentItems.push({ id: Date.now() + Math.random(), name, amount });
+      nameInput.value = '';
+      amountInput.value = '';
+      renderInvestmentItems();
+      updateInvestmentPreview();
+    }
+
+    function removeInvestmentItem(id) {
+      currentInvestmentItems = currentInvestmentItems.filter(item => item.id !== id);
+      renderInvestmentItems();
+      updateInvestmentPreview();
+    }
+
+    function renderInvestmentItems() {
+      const list = document.getElementById('investmentList');
+      const mode = document.getElementById('investmentMode').value;
+
+      if (mode === 'manual') {
+        list.innerHTML = '<div class="investment-empty">Itemized expenses are hidden in Manual Total Only mode.</div>';
+        return;
+      }
+
+      if (!currentInvestmentItems.length) {
+        list.innerHTML = '<div class="investment-empty">No itemized expenses yet.</div>';
+        return;
+      }
+
+      list.innerHTML = currentInvestmentItems.map(item => `
+        <div class="investment-row">
+          <div class="investment-name">${escapeHtml(item.name)}</div>
+          <div class="investment-amount">${formatMoney(item.amount)}</div>
+          <button class="btn-danger" onclick="removeInvestmentItem(${JSON.stringify(String(item.id))})">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function updateInvestmentPreview() {
+      const mode = document.getElementById('investmentMode').value;
+      const manual = getManualInvestment();
+      const itemizedSubtotal = getItemizedSubtotal();
+      const finalInvestment = getFinalInvestment(mode, manual, itemizedSubtotal);
+
+      document.getElementById('manualPreview').textContent = formatMoney(manual);
+      document.getElementById('itemizedPreview').textContent = formatMoney(itemizedSubtotal);
+      document.getElementById('finalInvestmentPreview').textContent = formatMoney(finalInvestment);
+    }
+
+    function validateInputs(data) {
+      const { date, name, mode, manualInvestment, quantity, price, ordered, paidCount, itemizedItems } = data;
+
       if (!date || !name) {
         alert('Please enter both date and product name.');
         return false;
       }
-      if ([investment, quantity, price, ordered, paidCount].some(v => v === '' || isNaN(v))) {
-        alert('Please fill in all number fields.');
+
+      if ([quantity, price, ordered, paidCount].some(v => v === '' || isNaN(v))) {
+        alert('Please fill in all required number fields.');
         return false;
       }
+
       if (Number(ordered) > Number(quantity)) {
         alert('Ordered items cannot be greater than total items in batch.');
         return false;
       }
+
       if (Number(paidCount) > Number(ordered)) {
         alert('Paid count cannot be greater than ordered count.');
         return false;
       }
-      if ([investment, quantity, price, ordered, paidCount].some(v => Number(v) < 0)) {
+
+      if ([manualInvestment, quantity, price, ordered, paidCount].some(v => Number(v) < 0)) {
         alert('Values cannot be negative.');
         return false;
       }
+
+      if (mode === 'manual' && Number(manualInvestment) <= 0) {
+        alert('Please enter a manual investment total.');
+        return false;
+      }
+
+      if (mode === 'itemized' && (!itemizedItems.length || getItemizedSubtotal(itemizedItems) <= 0)) {
+        alert('Please add at least one itemized expense.');
+        return false;
+      }
+
+      if (mode === 'both' && Number(manualInvestment) <= 0 && getItemizedSubtotal(itemizedItems) <= 0) {
+        alert('Please enter a manual investment, itemized expenses, or both.');
+        return false;
+      }
+
       return true;
     }
 
     function addRecord() {
-      const date = document.getElementById('recordDate').value;
-      const name = document.getElementById('productName').value.trim();
-      const investment = document.getElementById('investment').value;
-      const quantity = document.getElementById('quantity').value;
-      const price = document.getElementById('price').value;
-      const ordered = document.getElementById('ordered').value;
-      const paidCount = document.getElementById('paidCount').value;
+      const data = {
+        date: document.getElementById('recordDate').value,
+        name: document.getElementById('productName').value.trim(),
+        mode: document.getElementById('investmentMode').value,
+        manualInvestment: Number(document.getElementById('manualInvestment').value || 0),
+        quantity: Number(document.getElementById('quantity').value),
+        price: Number(document.getElementById('price').value),
+        ordered: Number(document.getElementById('ordered').value),
+        paidCount: Number(document.getElementById('paidCount').value),
+        itemizedItems: currentInvestmentItems.map(item => ({ ...item }))
+      };
 
-      if (!validateInputs(date, name, investment, quantity, price, ordered, paidCount)) return;
+      if (!validateInputs(data)) return;
 
       records.push({
         id: Date.now(),
-        date,
-        name,
-        investment: Number(investment),
-        quantity: Number(quantity),
-        price: Number(price),
-        ordered: Number(ordered),
-        paidCount: Number(paidCount)
+        date: data.date,
+        name: data.name,
+        investmentMode: data.mode,
+        manualInvestment: data.manualInvestment,
+        investmentItems: data.itemizedItems,
+        quantity: data.quantity,
+        price: data.price,
+        ordered: data.ordered,
+        paidCount: data.paidCount
       });
 
       saveRecords();
@@ -571,11 +846,17 @@
     function clearForm(resetDate = true) {
       if (resetDate) document.getElementById('recordDate').value = todayISO();
       document.getElementById('productName').value = '';
-      document.getElementById('investment').value = '';
+      document.getElementById('investmentMode').value = 'manual';
+      document.getElementById('manualInvestment').value = '';
       document.getElementById('quantity').value = '';
       document.getElementById('price').value = '';
       document.getElementById('ordered').value = '';
       document.getElementById('paidCount').value = '';
+      document.getElementById('itemCostName').value = '';
+      document.getElementById('itemCostAmount').value = '';
+      currentInvestmentItems = [];
+      updateInvestmentModeUI();
+      updateInvestmentPreview();
     }
 
     function deleteRecord(id) {
@@ -645,10 +926,26 @@
       document.getElementById('unsoldCardValue').textContent = `${totals.unsoldQty} (${formatMoney(totals.unsoldValue)})`;
     }
 
+    function formatMode(mode) {
+      if (mode === 'itemized') return 'Itemized Only';
+      if (mode === 'both') return 'Both';
+      return 'Manual Only';
+    }
+
+    function itemizedDetailsHtml(items) {
+      if (!items || !items.length) return '<div class="detail-item">No itemized entries</div>';
+      return items.map(it => `<div class="detail-item">${escapeHtml(it.name)}: ${formatMoney(it.amount)}</div>`).join('');
+    }
+
+    function itemizedDetailsText(items) {
+      if (!items || !items.length) return 'No itemized entries';
+      return items.map(it => `${it.name}: ${it.amount}`).join(' | ');
+    }
+
     function renderDesktopTable(rows) {
       const body = document.getElementById('recordsBodyDesktop');
       if (!rows.length) {
-        body.innerHTML = '<tr><td colspan="16" class="empty">No matching records.</td></tr>';
+        body.innerHTML = '<tr><td colspan="20" class="empty">No matching records.</td></tr>';
         return;
       }
 
@@ -660,8 +957,12 @@
         return `
           <tr>
             <td>${item.date}</td>
-            <td>${item.name}</td>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${formatMode(item.investmentMode)}</td>
+            <td>${formatMoney(item.manualInvestment)}</td>
+            <td>${formatMoney(item.itemizedSubtotal)}</td>
             <td>${formatMoney(item.investment)}</td>
+            <td><div class="detail-list">${itemizedDetailsHtml(item.itemizedItems)}</div></td>
             <td>${item.quantity}</td>
             <td>${formatMoney(item.price)}</td>
             <td>${item.ordered}</td>
@@ -696,14 +997,17 @@
           <div class="record-card">
             <div class="record-top">
               <div>
-                <div class="record-name">${item.name}</div>
+                <div class="record-name">${escapeHtml(item.name)}</div>
                 <div class="record-date">${item.date}</div>
               </div>
               <div>${statusHtml}</div>
             </div>
 
             <div class="record-grid">
-              <div class="metric"><div class="metric-label">Investment</div><div class="metric-value">${formatMoney(item.investment)}</div></div>
+              <div class="metric"><div class="metric-label">Investment Mode</div><div class="metric-value">${formatMode(item.investmentMode)}</div></div>
+              <div class="metric"><div class="metric-label">Investment Used</div><div class="metric-value">${formatMoney(item.investment)}</div></div>
+              <div class="metric"><div class="metric-label">Manual Investment</div><div class="metric-value">${formatMoney(item.manualInvestment)}</div></div>
+              <div class="metric"><div class="metric-label">Itemized Subtotal</div><div class="metric-value">${formatMoney(item.itemizedSubtotal)}</div></div>
               <div class="metric"><div class="metric-label">Total Qty</div><div class="metric-value">${item.quantity}</div></div>
               <div class="metric"><div class="metric-label">Price Per Item</div><div class="metric-value">${formatMoney(item.price)}</div></div>
               <div class="metric"><div class="metric-label">Ordered</div><div class="metric-value">${item.ordered}</div></div>
@@ -715,6 +1019,7 @@
               <div class="metric"><div class="metric-label">Unsold Qty</div><div class="metric-value">${item.unsoldQty}</div></div>
               <div class="metric"><div class="metric-label">Unsold Value</div><div class="metric-value">${formatMoney(item.unsoldValue)}</div></div>
               <div class="metric"><div class="metric-label">Expected</div><div class="metric-value">${formatMoney(item.expectedAllPaid)}</div></div>
+              <div class="metric" style="grid-column: 1 / -1;"><div class="metric-label">Itemized Details</div><div class="metric-value" style="font-size:13px; font-weight:700;">${itemizedDetailsHtml(item.itemizedItems)}</div></div>
             </div>
 
             <div class="record-actions">
@@ -763,14 +1068,19 @@
       });
 
       const headers = [
-        'Date', 'Product', 'Investment', 'Total Qty', 'Price Per Item', 'Ordered', 'Paid Count', 'Unpaid Count',
-        'Sold Value', 'Paid Earnings', 'Unpaid Value', 'Unsold Qty', 'Unsold Value', 'Expected if All Paid', 'Estimated Profit'
+        'Date', 'Product', 'Investment Mode', 'Manual Investment', 'Itemized Subtotal', 'Investment Used', 'Itemized Details',
+        'Total Qty', 'Price Per Item', 'Ordered', 'Paid Count', 'Unpaid Count', 'Sold Value', 'Paid Earnings', 'Unpaid Value',
+        'Unsold Qty', 'Unsold Value', 'Expected if All Paid', 'Estimated Profit'
       ];
 
       const dataLines = rows.map(item => [
         item.date,
         item.name,
+        formatMode(item.investmentMode),
+        item.manualInvestment,
+        item.itemizedSubtotal,
         item.investment,
+        itemizedDetailsText(item.itemizedItems),
         item.quantity,
         item.price,
         item.ordered,
@@ -800,7 +1110,8 @@
 
       const csvRows = [headers, ...dataLines, ...summaryLines]
         .map(row => row.map(cell => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(','))
-        .join('\n');
+        .join('
+');
 
       const blob = new Blob([csvRows], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -813,6 +1124,19 @@
       URL.revokeObjectURL(url);
     }
 
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    document.getElementById('manualInvestment').addEventListener('input', updateInvestmentPreview);
+
+    updateInvestmentModeUI();
+    updateInvestmentPreview();
     resetFilters();
   </script>
 </body>
