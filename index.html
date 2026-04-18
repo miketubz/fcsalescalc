@@ -508,7 +508,7 @@
             <label for="itemCostAmount">Expense Amount</label>
             <input type="number" id="itemCostAmount" min="0" step="0.01" placeholder="e.g. 120" />
           </div>
-          <button class="btn-light" onclick="addInvestmentItem()">Add Expense</button>
+          <button type="button" class="btn-light" onclick="addInvestmentItem()">Add Expense</button>
         </div>
 
         <div class="investment-list" id="investmentList">
@@ -532,8 +532,8 @@
       </div>
 
       <div class="actions">
-        <button class="btn-primary" onclick="addRecord()">Add Record</button>
-        <button class="btn-muted" onclick="clearForm()">Clear Form</button>
+        <button type="button" class="btn-primary" onclick="addRecord()">Add Record</button>
+        <button type="button" class="btn-muted" onclick="clearForm()">Clear Form</button>
       </div>
       <div class="helper">Use manual total, itemized expenses, or both. Paid count cannot be greater than ordered count, and ordered count cannot be greater than total items.</div>
     </div>
@@ -563,9 +563,9 @@
           <input type="date" id="toDate" />
         </div>
         <div class="filter-actions">
-          <button class="btn-light" onclick="applyFilters()">Apply Filter</button>
-          <button class="btn-muted" onclick="resetFilters()">Reset Filter</button>
-          <button class="btn-secondary" onclick="exportCSV()">Export to Excel</button>
+          <button type="button" class="btn-light" onclick="applyFilters()">Apply Filter</button>
+          <button type="button" class="btn-muted" onclick="resetFilters()">Reset Filter</button>
+          <button type="button" class="btn-secondary" onclick="exportCSV()">Export to Excel</button>
         </div>
       </div>
     </div>
@@ -613,7 +613,7 @@
 
   <script>
     const STORAGE_KEY = 'simple_sales_tracker_records';
-    let records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let records = loadRecords();
     let filteredRecords = [...records];
     let currentInvestmentItems = [];
 
@@ -630,8 +630,24 @@
       });
     }
 
+    function loadRecords() {
+      try {
+        const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
+        return raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        console.warn('Local storage unavailable. Records will stay only for this session.', error);
+        return [];
+      }
+    }
+
     function saveRecords() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      try {
+        if (window.localStorage) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+      } catch (error) {
+        console.warn('Could not save to local storage.', error);
+      }
     }
 
     function getManualInvestment() {
